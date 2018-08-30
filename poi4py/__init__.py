@@ -39,11 +39,11 @@ def start_jvm():
 
 def add_classpaths(paths):
     URL = JPackage('java.net').URL
-    sysloader = JPackage('java.lang').ClassLoader.getSystemClassLoader()
+    sys_loader = JPackage('java.lang').ClassLoader.getSystemClassLoader()
     method = [m for m in (getDeclaredMethods(JPackage('java.net').URLClassLoader)) if m.name == 'addURL'][0]
     method.setAccessible(True)
     for path in paths:
-        method.invoke(sysloader, [URL(f"file://{path}")])
+        method.invoke(sys_loader, [URL(f"file://{path}")])
 
 
 def open_workbook(filename, password=None, read_only=False):
@@ -55,6 +55,12 @@ def open_workbook(filename, password=None, read_only=False):
         logging.exception(e)
         raise e
 
+def save_workbook(filename, workbook):
+    try:
+        workbook.write(java.io.FileOutputStream(filename))
+    except jpype.JavaException as e:
+        logging.exception(e)
+        raise e
 
 def shutdown_jvm():
     jpype.shutdownJVM()

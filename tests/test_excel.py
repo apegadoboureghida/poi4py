@@ -2,16 +2,22 @@ import os
 import unittest
 
 import poi4py
-
-
 class ExcelTest(unittest.TestCase):
 
     def test_read(self):
         poi4py.start_jvm()
-        workbook = poi4py.open_workbook(os.path.dirname(__file__) + '/소득자별근로소득원천징수부_20180403133614.xls', password='1111')
+        file_path = os.path.dirname(__file__) + '/test.xlsx'
+        file_path_out = os.path.dirname(__file__) + '/test_out.xlsx'
+        print(file_path)
+        workbook = poi4py.open_workbook(file_path)
         sheet = workbook.getSheetAt(0)
         for i in range(3, sheet.getLastRowNum() + 1):
             row = sheet.getRow(i)
-            print(row.getCell(0).getStringCellValue(), row.getCell(1).getStringCellValue(), row.getCell(2).getNumericCellValue())
 
+            for i in range(0, row.lastCellNum):
+                cell = row.getCell(i)
+                if cell:
+                    print('fire')
+                    cell.setCellFormula('1+1')
+        poi4py.save_workbook(file_path_out, workbook)
         poi4py.shutdown_jvm()
